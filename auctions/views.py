@@ -1,14 +1,35 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.views.generic import (
+    ListView,
+    CreateView
+)
 
-from .models import User
+from .models import (
+    User,
+    Listing,
+)
 
 
-def index(request):
-    return render(request, "auctions/index.html")
+class ListingListView(ListView):
+    model = Listing
+    template_name = 'auctions/index.html'
+    context_object_name = 'listings'
+    ordering = ['-date_created']
+
+
+class ListingCreateView(LoginRequiredMixin, CreateView):
+    model = Listing
+    template_name = 'auctions/create_listing.html'
+    fields = ['title', 'description', 'price', 'image', 'category']
+
+    def form_valid(self, form):
+        form.instance.user_id = self.request.user_id
+        return super().form_valid(form)
 
 
 def login_view(request):
