@@ -2,11 +2,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views.generic import (
     ListView,
-    CreateView
+    CreateView,
+    DetailView,
 )
 
 from .models import (
@@ -31,6 +32,23 @@ class ListingCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user_id = self.request.user
         return super().form_valid(form)
+
+
+class ListingDetailView(DetailView):
+    model = Listing
+    template_name = 'auctions/detail_listing.html'
+
+
+class WatchlistListView(ListView):
+    model = Listing
+    template_name = 'auctions/watchlist.html'
+    context_object_name = 'listings'
+    ordering = ['-date_created']
+
+    def get_queryset(self):
+        user = get_object_or_404(User, id=self.kwargs.get('pk'))
+        print(user)
+        return Listing.objects.filter(user_id_id=user)
 
 
 def login_view(request):
