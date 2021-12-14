@@ -8,7 +8,7 @@
                 <h2>{{ l.title }}</h2>
                 <p>{{ l.description }}</p>
                 <h4>${{ l.price }}</h4>
-                <img class="article-img" style="width: 500px;height: 500px" alt="No image available" src="{{ l.image }}">
+                <img alt="No image available" src="{{ l.image.url }}">
             {% endif %}
             {% if l.bid != Null %}
                 <h4>{{ l.bid }}</h4>
