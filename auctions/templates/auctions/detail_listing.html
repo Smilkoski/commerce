@@ -1,0 +1,25 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+        <article class="media content-section">
+            {% if object.image != Null and object.title != Null and object.description != Null and object.price != Null%}
+                <h2>{{ object.title }}</h2>
+                <p>{{ object.description }}</p>
+                <h4>${{ object.price }}</h4>
+                <img alt="No image available" src="{{ object.image.url }}">
+            {% if object.bid != Null %}
+                <h4>{{ object.bid }}</h4>
+            {% endif %}
+            {% if object.category != Null%}
+                <a>{{ object.category }}</a>
+            {% endif %}
+            {% if object.date_created != Null %}
+                <h4>{{ object.date_created }}</h4>
+            {% endif %}
+
+            {% endif %}
+        </article>
+
+
+{% endblock %}
