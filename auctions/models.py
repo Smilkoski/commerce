@@ -1,7 +1,8 @@
+from PIL import Image
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
-from PIL import Image
+
 
 class User(AbstractUser):
     pass
@@ -34,6 +35,7 @@ class Listing(models.Model):
             img.thumbnail(output_size)
             img.save(self.image.path)
 
+
 class Bid(models.Model):
     listing_id = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='listing_user')
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bid_user')
@@ -44,3 +46,8 @@ class Comment(models.Model):
     listing_id = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='listing_comment')
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_comment')
     comment = models.CharField(max_length=100)
+
+
+class Watchlist(models.Model):
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_watchlist')
+    listing_id = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='user_listings')
