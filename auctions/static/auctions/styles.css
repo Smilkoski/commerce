@@ -1,3 +1,21 @@
 body {
     padding: 10px;
 }
+
+.content-section {
+    background: #ffffff;
+    padding: 10px 20px;
+    border: 1px solid #dddddd;
+    border-radius: 3px;
+    margin-bottom: 20px;
+
+    display: block;
+}
+.content-section img{
+    width: 300px;
+    height: 300px;
+}
+
+.article-content{
+    display: inline-block;
+}
