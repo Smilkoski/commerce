@@ -26,9 +26,10 @@ class ListingCreateView(LoginRequiredMixin, CreateView):
     model = Listing
     template_name = 'auctions/create_listing.html'
     fields = ['title', 'description', 'price', 'image', 'category']
+    success_url = '/'
 
     def form_valid(self, form):
-        form.instance.user_id = self.request.user_id
+        form.instance.user_id = self.request.user
         return super().form_valid(form)
 
 
