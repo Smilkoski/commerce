@@ -2,24 +2,32 @@
 
 {% block body %}
     <h2>Active Listings</h2>
-    {% for l in listings %}
-        <article class="media content-section">
+    {% for l in all_listings %}
+        <article class="content-section mx-3 px-3">
             {% if l.image != Null and l.title != Null and l.description != Null and l.price != Null%}
-                <h2>{{ l.title }}</h2>
-                <p>{{ l.description }}</p>
-                <h4>${{ l.price }}</h4>
-                <img alt="No image available" src="{{ l.image.url }}">
-            {% endif %}
-            {% if l.bid != Null %}
-                <h4>{{ l.bid }}</h4>
-            {% endif %}
-            {% if l.category != Null%}
-                <a>{{ l.category }}</a>
-            {% endif %}
-            {% if l.date_created != Null %}
-                <h4>{{ l.date_created }}</h4>
-            {% endif %}
+                <a href="{% url 'detail_listing' l.id %}"><img alt="No image available" src="{{ l.image.url }}"></a>
+                <div class="article-content mx-3">
+                    <h3><a href="{% url 'detail_listing' l.id %}">{{ l.title }}</a></h3>
+                    <p>{{ l.description }}</p>
+                    <h4>${{ l.price }}</h4>
+                    {% if l.bid != Null %}
+                        <h4>{{ l.bid }}</h4>
+                    {% endif %}
+                    {% if l.category != Null%}
+                        <a>{{ l.category }}</a>
+                    {% endif %}
+                    {% if l.date_created != Null %}
+                        <h4>{{ l.date_created }}</h4>
+                    {% endif %}
 
+                    {% if l.id in user_watchlist %}
+                        <a class="btn btn-danger" href="{% url 'remove_from_watchlist' user.id l.id %}">Remove From Watchlist</a>
+                    {% else %}
+                        <a class="btn btn-info" href="{% url 'add_to_watchlist' user.id l.id %}">Add To Watchlist</a>
+                    {% endif %}
+
+                </div>
+            {% endif %}
         </article>
     {% endfor %}
 
