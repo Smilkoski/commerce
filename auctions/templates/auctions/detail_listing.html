@@ -12,7 +12,7 @@
                 <h4>{{ object.bid }}</h4>
             {% endif %}
             {% if object.category != Null%}
-                <a>{{ object.category }}</a>
+                <a href="{% url 'category' object.category %}">{{ object.category }}</a>
             {% endif %}
             {% if object.date_created != Null %}
                 <h4>{{ object.date_created }}</h4>
