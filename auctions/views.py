@@ -33,6 +33,24 @@ class ListingListView(ListView):
         return context
 
 
+class CategoryListView(ListView):
+    model = Listing
+    template_name = 'auctions/category.html'
+    ordering = ['-date_created']
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(**kwargs)
+        category = self.kwargs.get('category')
+        context['all_listings'] = Listing.objects.filter(category=category)
+        context['name'] = category
+
+        if self.request.user.is_authenticated:
+            context['user_watchlist'] = [j.listing_id_id
+                                         for j in Watchlist.objects.filter(user_id_id=self.request.user)]
+
+        return context
+
+
 class ListingCreateView(LoginRequiredMixin, CreateView):
     model = Listing
     template_name = 'auctions/create_listing.html'
