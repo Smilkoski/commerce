@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.views.generic import (
     ListView,
@@ -13,14 +13,23 @@ from django.views.generic import (
 from .models import (
     User,
     Listing,
+    Watchlist,
 )
 
 
 class ListingListView(ListView):
     model = Listing
     template_name = 'auctions/index.html'
-    context_object_name = 'listings'
     ordering = ['-date_created']
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['all_listings'] = Listing.objects.all()
+
+        context['user_watchlist'] = [j.listing_id_id
+                                     for j in Watchlist.objects.filter(user_id_id=self.request.user)]
+
+        return context
 
 
 class ListingCreateView(LoginRequiredMixin, CreateView):
@@ -47,8 +56,22 @@ class WatchlistListView(ListView):
 
     def get_queryset(self):
         user = get_object_or_404(User, id=self.kwargs.get('pk'))
-        print(user)
-        return Listing.objects.filter(user_id_id=user)
+        return Watchlist.objects.filter(user_id_id=user.id)
+
+
+def add_to_watchlist(request, user, listing):
+    u = User.objects.get(id=user)
+    l = Listing.objects.get(id=listing)
+
+    wl = Watchlist(user_id=u, listing_id=l)
+    wl.save()
+    return redirect(reverse('index'))
+
+
+def remove_from_watchlist(request, user, listing):
+    Watchlist.objects.filter(user_id=user, listing_id=listing).first().delete()
+
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 
 def login_view(request):
