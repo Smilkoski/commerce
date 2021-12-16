@@ -10,6 +10,7 @@ from .views import (
     logout_view,
     register,
     WatchlistListView,
+    CategoryListView,
     add_to_watchlist,
     remove_from_watchlist,
 )
@@ -19,6 +20,7 @@ urlpatterns = [
     path("create/", ListingCreateView.as_view(), name="create"),
     path("detail/<int:pk>/", ListingDetailView.as_view(), name="detail_listing"),
     path("watchlist/<int:pk>/", WatchlistListView.as_view(), name="watchlist"),
+    path("category/<str:category>/", CategoryListView.as_view(), name="category"),
     path("add_to_watchlist/<int:user>/<int:listing>/", add_to_watchlist, name="add_to_watchlist"),
     path("remove_from_watchlist/<int:user>/<int:listing>/", remove_from_watchlist, name="remove_from_watchlist"),
     path("login/", login_view, name="login"),
