@@ -9,11 +9,11 @@ class User(AbstractUser):
 
 
 CATEGORIES = (
-    ('Fashion', 'FA'),
-    ('Sport', 'SP'),
-    ('Toys', 'TO'),
-    ('Electronic', 'EL'),
-    ('Home', 'HO'),
+    ('Fashion', 'Fashion'),
+    ('Sport', 'Sport'),
+    ('Toys', 'Toys'),
+    ('Electronic', 'Electronic'),
+    ('Home', 'Home'),
 )
 
 
@@ -23,7 +23,7 @@ class Listing(models.Model):
     description = models.TextField(max_length=200, blank='')
     price = models.IntegerField()
     image = models.ImageField(default='default.jpg', upload_to='listings_images')
-    category = models.CharField(max_length=15, choices=CATEGORIES, default='FA')
+    category = models.CharField(max_length=15, choices=CATEGORIES, default='Fashion')
     date_created = models.DateTimeField(default=timezone.now)
 
     def save(self, *args, **kwargs):
