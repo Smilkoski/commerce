@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect
@@ -25,9 +26,9 @@ class ListingListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['all_listings'] = Listing.objects.all()
-
-        context['user_watchlist'] = [j.listing_id_id
-                                     for j in Watchlist.objects.filter(user_id_id=self.request.user)]
+        if self.request.user.is_authenticated:
+            context['user_watchlist'] = [j.listing_id_id
+                                         for j in Watchlist.objects.filter(user_id_id=self.request.user)]
 
         return context
 
@@ -59,6 +60,7 @@ class WatchlistListView(ListView):
         return Watchlist.objects.filter(user_id_id=user.id)
 
 
+@login_required(redirect_field_name='/login/')
 def add_to_watchlist(request, user, listing):
     u = User.objects.get(id=user)
     l = Listing.objects.get(id=listing)
@@ -68,6 +70,7 @@ def add_to_watchlist(request, user, listing):
     return redirect(reverse('index'))
 
 
+@login_required(redirect_field_name='/login/')
 def remove_from_watchlist(request, user, listing):
     Watchlist.objects.filter(user_id=user, listing_id=listing).first().delete()
 

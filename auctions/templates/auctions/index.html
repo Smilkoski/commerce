@@ -19,11 +19,12 @@
                     {% if l.date_created != Null %}
                         <h4>{{ l.date_created }}</h4>
                     {% endif %}
-
-                    {% if l.id in user_watchlist %}
-                        <a class="btn btn-danger" href="{% url 'remove_from_watchlist' user.id l.id %}">Remove From Watchlist</a>
-                    {% else %}
-                        <a class="btn btn-info" href="{% url 'add_to_watchlist' user.id l.id %}">Add To Watchlist</a>
+                    {% if user.is_authenticated %}
+                        {% if l.id in user_watchlist %}
+                            <a class="btn btn-danger" href="{% url 'remove_from_watchlist' user.id l.id %}">Remove From Watchlist</a>
+                        {% else %}
+                            <a class="btn btn-info" href="{% url 'add_to_watchlist' user.id l.id %}">Add To Watchlist</a>
+                        {% endif %}
                     {% endif %}
 
                 </div>
