@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
+from django.db.models import Max
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
@@ -108,7 +109,6 @@ def detail(request, pk, *args, **kwargs):
 
     bids = Bid.objects.filter(listing_id=pk).order_by('-price')
     comments = Comment.objects.filter(listing_id=pk).order_by('-date_commented')
-    users = User.objects.all()
 
     context = {
         'b_form': BidForm(),
@@ -116,9 +116,18 @@ def detail(request, pk, *args, **kwargs):
         'object': Listing.objects.get(id=pk),
         'bids': bids,
         'comments': comments,
-        'users': users,
     }
     return render(request, 'auctions/detail_listing.html', context)
+
+
+def close_bid(request, listing_id, user_id):
+    l = Listing.objects.filter(id=listing_id).first()
+    l.active = False
+
+    best_bid = Bid.objects.filter(listing_id=listing_id).aggregate(Max('price'))['price__max']
+    b = Bid.objects.filter(price=best_bid).first()
+    l.winner = b.user_id
+    return redirect(reverse('detail_listing', args=[listing_id]))
 
 
 class WatchlistListView(LoginRequiredMixin, ListView):
