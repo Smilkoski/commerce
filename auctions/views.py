@@ -12,12 +12,16 @@ from django.views.generic import (
     DetailView,
 )
 
-from .forms import BidForm
+from .forms import (
+    BidForm,
+    CommentForm,
+)
 from .models import (
     User,
     Listing,
     Watchlist,
     Bid,
+    Comment,
 )
 
 
@@ -76,32 +80,44 @@ class ListingDetailView(DetailView):
 
 
 def detail(request, pk, *args, **kwargs):
-    context = {}
-    if request.method == 'GET':
-        context['form'] = BidForm()
-
-    elif request.method == 'POST':
-        form = BidForm(request.POST)
-        p = int(form['price'].data)
+    if request.method == 'POST':
+        b_form = BidForm(request.POST, instance=request.user)
+        c_form = CommentForm(request.POST, instance=request.user)
         l = Listing.objects.filter(id=pk).first()
-        bids = Bid.objects.filter(listing_id=pk)
-        flag = True
-        for b in bids:
-            if b.price + 1 > p:
-                flag = False
 
-        if flag and p > l.price:
-            b = Bid(user_id=request.user, listing_id=l, price=p)
-            b.save()
-            messages.success(request, 'Bid was successful!')
-        else:
-            messages.error(request, 'Bid was not successful, try again.')
+        p = b_form['price'].data
+        if p is not None:
+            p = int(p)
+            bids = Bid.objects.filter(listing_id=pk)
+            flag = True
+            for b in bids:
+                if b.price + 1 > p:
+                    flag = False
 
-        context['form'] = BidForm()
+            if flag and p > l.price:
+                b = Bid(user_id=request.user, listing_id=l, price=p)
+                b.save()
+                messages.success(request, 'Bid was successful!')
+            else:
+                messages.error(request, 'Bid was not successful, try again.')
 
-    context['object'] = Listing.objects.get(id=pk)
+        c = c_form['comment'].data
+        if c is not None:
+            comment = Comment(user_id=request.user, listing_id=l, comment=c)
+            comment.save()
+
     bids = Bid.objects.filter(listing_id=pk).order_by('-price')
-    context['bids'] = bids
+    comments = Comment.objects.filter(listing_id=pk).order_by('-date_commented')
+    users = User.objects.all()
+
+    context = {
+        'b_form': BidForm(),
+        'c_form': CommentForm(),
+        'object': Listing.objects.get(id=pk),
+        'bids': bids,
+        'comments': comments,
+        'users': users,
+    }
     return render(request, 'auctions/detail_listing.html', context)
 
 
