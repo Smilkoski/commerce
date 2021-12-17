@@ -14,12 +14,14 @@ from .views import (
     add_to_watchlist,
     remove_from_watchlist,
     detail,
+    close_bid,
 )
 
 urlpatterns = [
     path("", ListingListView.as_view(), name="index"),
     path("create/", ListingCreateView.as_view(), name="create"),
     path("detail/<int:pk>/", detail, name="detail_listing"),
+    path("close_bid/<int:listing_id>/<int:user_id>/", close_bid, name="close_bid"),
     path("watchlist/<int:pk>/", WatchlistListView.as_view(), name="watchlist"),
     path("category/<str:category>/", CategoryListView.as_view(), name="category"),
     path("add_to_watchlist/<int:user>/<int:listing>/", add_to_watchlist, name="add_to_watchlist"),
