@@ -40,12 +40,14 @@ class Bid(models.Model):
     listing_id = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='listing_user')
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bid_user')
     price = models.IntegerField()
+    active = models.BooleanField(default=True)
 
 
 class Comment(models.Model):
     listing_id = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='listing_comment')
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_comment')
     comment = models.CharField(max_length=100)
+    date_commented = models.DateTimeField(default=timezone.now)
 
 
 class Watchlist(models.Model):
