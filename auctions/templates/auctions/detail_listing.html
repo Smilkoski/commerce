@@ -1,25 +1,47 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
+    {% for msg in messages %}
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+          <h3>{{ msg }}</h3>
+        </div>
+    {% endfor %}
 
         <article class="media content-section">
             {% if object.image != Null and object.title != Null and object.description != Null and object.price != Null%}
                 <h2>{{ object.title }}</h2>
-                <p>{{ object.description }}</p>
-                <h4>${{ object.price }}</h4>
                 <img alt="No image available" src="{{ object.image.url }}">
-            {% if object.bid != Null %}
-                <h4>{{ object.bid }}</h4>
-            {% endif %}
-            {% if object.category != Null%}
+                <p>{{ object.description }}</p>
                 <a href="{% url 'category' object.category %}">{{ object.category }}</a>
-            {% endif %}
-            {% if object.date_created != Null %}
-                <h4>{{ object.date_created }}</h4>
-            {% endif %}
+                <h4>${{ object.price }}.00</h4>
 
             {% endif %}
         </article>
 
+    {% if user.is_authenticated %}
+    <div class='content-section'>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Place Your Bit</legend>
+                {{ form.as_p }}
+            </fieldset>
+            <div class="form-group ml-2">
+                <button class="btn btn-info" style="border: black 1px solid" type="submit">Place Bid</button>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+
+    {% if bids.count > 0 %}
+        <div>
+            <h3>All Bids</h3>
+        {% for b in bids %}
+            <div>
+                <h5>{{ user }}  {{ b.price }}</h5>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
 
 {% endblock %}

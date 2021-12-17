@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -11,10 +12,12 @@ from django.views.generic import (
     DetailView,
 )
 
+from .forms import BidForm
 from .models import (
     User,
     Listing,
     Watchlist,
+    Bid,
 )
 
 
@@ -66,8 +69,43 @@ class ListingDetailView(DetailView):
     model = Listing
     template_name = 'auctions/detail_listing.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
-class WatchlistListView(ListView):
+        return context
+
+
+def detail(request, pk, *args, **kwargs):
+    context = {}
+    if request.method == 'GET':
+        context['form'] = BidForm()
+
+    elif request.method == 'POST':
+        form = BidForm(request.POST)
+        p = int(form['price'].data)
+        l = Listing.objects.filter(id=pk).first()
+        bids = Bid.objects.filter(listing_id=pk)
+        flag = True
+        for b in bids:
+            if b.price + 1 > p:
+                flag = False
+
+        if flag and p > l.price:
+            b = Bid(user_id=request.user, listing_id=l, price=p)
+            b.save()
+            messages.success(request, 'Bid was successful!')
+        else:
+            messages.error(request, 'Bid was not successful, try again.')
+
+        context['form'] = BidForm()
+
+    context['object'] = Listing.objects.get(id=pk)
+    bids = Bid.objects.filter(listing_id=pk).order_by('-price')
+    context['bids'] = bids
+    return render(request, 'auctions/detail_listing.html', context)
+
+
+class WatchlistListView(LoginRequiredMixin, ListView):
     model = Listing
     template_name = 'auctions/watchlist.html'
     context_object_name = 'listings'
