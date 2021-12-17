@@ -24,24 +24,46 @@
             {% csrf_token %}
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">Place Your Bit</legend>
-                {{ form.as_p }}
+                {{ b_form.as_p }}
             </fieldset>
             <div class="form-group ml-2">
                 <button class="btn btn-info" style="border: black 1px solid" type="submit">Place Bid</button>
+
             </div>
         </form>
-    </div>
-    {% endif %}
 
-    {% if bids.count > 0 %}
+        {% if bids.count > 0 %}
         <div>
-            <h3>All Bids</h3>
         {% for b in bids %}
             <div>
-                <h5>{{ user }}  {{ b.price }}</h5>
+                <h5>{{ b.user_id }}:  ${{ b.price }}</h5>
             </div>
         {% endfor %}
         </div>
-    {% endif %}
+        {% endif %}
+    </div>
+    <div class='content-section'>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Comments</legend>
+                {{ c_form.as_p }}
+            </fieldset>
+            <div class="form-group ml-2">
+                <button class="btn btn-info" style="border: black 1px solid" type="submit">Comment</button>
+            </div>
+        </form>
 
+    </div>
+    {% endif %}
+        {% if comments.count > 0 %}
+        <div>
+        <h3>Comments</h3>
+        {% for c in comments %}
+            <div>
+                <h5>{{ c.user_id }}:  {{ c.comment }}</h5>
+            </div>
+        {% endfor %}
+        </div>
+        {% endif %}
 {% endblock %}
