@@ -25,6 +25,8 @@ class Listing(models.Model):
     image = models.ImageField(default='default.jpg', upload_to='listings_images')
     category = models.CharField(max_length=15, choices=CATEGORIES, default='Fashion')
     date_created = models.DateTimeField(default=timezone.now)
+    active = models.BooleanField(default=True)
+    winner = models.IntegerField(default=-1)
 
     def save(self, *args, **kwargs):
         super().save()
@@ -40,7 +42,6 @@ class Bid(models.Model):
     listing_id = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='listing_user')
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bid_user')
     price = models.IntegerField()
-    active = models.BooleanField(default=True)
 
 
 class Comment(models.Model):
