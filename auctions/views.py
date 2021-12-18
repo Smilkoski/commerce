@@ -126,7 +126,8 @@ def close_bid(request, listing_id, user_id):
 
     best_bid = Bid.objects.filter(listing_id=listing_id).aggregate(Max('price'))['price__max']
     b = Bid.objects.filter(price=best_bid).first()
-    l.winner = b.user_id
+    l.winner = b.user_id_id
+    l.save()
     return redirect(reverse('detail_listing', args=[listing_id]))
 
 
