@@ -1,0 +1,21 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+{#    <h2>Create Listing</h2>#}
+
+    <div class='content-section'>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Create Listing</legend>
+                {{ form.as_p }}
+            </fieldset>
+            <div class="form-group ml-2">
+                <button class="btn bnt-outline-info" style="border: black 1px solid" type="submit">Save</button>
+                <a class="btn btn-info ml-2" href="{% url 'index' %}">Cancel</a>
+            </div>
+        </form>
+
+    </div>
+
+{% endblock %}

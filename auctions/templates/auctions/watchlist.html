@@ -1,0 +1,29 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Watchlist</h2>
+    {% for l in listings %}
+        <article class="content-section mx-3 px-3">
+            {% if l.listing_id.image != Null and l.listing_id.title != Null and l.listing_id.description != Null and l.listing_id.price != Null%}
+                <a href="{% url 'detail_listing' l.listing_id.id %}"><img alt="No image available" src="{{ l.listing_id.image.url }}"></a>
+                <div class="article-content mx-3">
+                    <h3><a href="{% url 'detail_listing' l.listing_id.id %}">{{ l.listing_id.title }}</a></h3>
+                    <p>{{ l.listing_id.description }}</p>
+                    <h4>${{ l.listing_id.price }}</h4>
+                    {% if l.listing_id.bid != Null %}
+                        <h4>{{ l.listing_id.bid }}</h4>
+                    {% endif %}
+                    {% if l.listing_id.category != Null%}
+                        <a>{{ l.listing_id.category }}</a>
+                    {% endif %}
+                    {% if l.listing_id.date_created != Null %}
+                        <h4>{{ l.listing_id.date_created }}</h4>
+                    {% endif %}
+
+                    <a class="btn btn-danger" href="{% url 'remove_from_watchlist' user.id l.listing_id.id %}">Remove From Watchlist</a>
+                </div>
+            {% endif %}
+        </article>
+    {% endfor %}
+
+{% endblock %}

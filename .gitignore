@@ -159,7 +159,7 @@ cython_debug/
 *.pyc
 __pycache__
 db.sqlite3
-media
+auctions/media
 
 # Backup files # 
 *.bak 
